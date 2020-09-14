@@ -29,12 +29,12 @@ const long long timeCut     = 400000;
 const long long LongTimeCut = 400000;
 const double    distCut     = 500;
 
-TH1D* array_h[5][3][3][4][8];
+TH1D* array_h[7][3][3][4][10];
 TH1D* h_high = new TH1D("h_high","h_high",500,0,5000); 
 TH1D* h_mid = new TH1D("h_mid","h_mid",500,0,5000); 
 TH1D* h_low = new TH1D("h_low","h_low",500,0,5000); 
 
-void Fill_dtlSH(TH1D* h[5][3][3][4][8], double dt_high, double dt_mid, double dt_low, double prompt, double delay, double dt, double distance);
+void Fill_dtlSH(TH1D* h[7][3][3][4][10], double dt_high, double dt_mid, double dt_low, double prompt, double delay, double dt, double distance);
 
 bool epLock[5]= {false,false,false,false,false};
 bool edLock[5]= {false,false,false,false,false};
@@ -47,11 +47,6 @@ int main(int argc, char** argv){
     if(EH3)EH=3;
 
     /////////////////parameter space//////////////////
-    double a_FastN_ep[5]={0,0,0,0,0};    
-    double a_FastN_xp[5]={0,0,0,0,0};    
-    double a_FastN_yp[5]={0,0,0,0,0};    
-    double a_FastN_zp[5]={0,0,0,0,0};    
-    double a_FastN_tp[5]={0,0,0,0,0};    
 
     double a_ep[5],a_xp[5],a_yp[5],a_zp[5],a_ed[5],a_xd[5],a_yd[5],a_zd[5];
     long long a_tlSH_high[5],a_tlSH_mid[5],a_tlSH_low[5];
@@ -113,24 +108,12 @@ int main(int argc, char** argv){
     TFile* output = new TFile(argv[2],"RECREATE");
     output->cd();
     /////Li9He8 histogram//////
-    for(int nslice = 4;nslice<9;nslice++)
+    for(int nslice = 4;nslice<11;nslice++)
         for(int site = 0;site<3;site++)
             for(int range = 0;range<3;range++)
                 for(int sliceType = 0;sliceType<4;sliceType++)
                     for(int slice = 0;slice<nslice;slice++)
                             array_h[nslice-4][site][range][sliceType][slice] = new TH1D(TString::Format("dtlSH_EH%i_Nslice%i_%i_%i_%i",site+1,nslice,range,sliceType,slice),TString::Format("dtlSH_EH%i_%i_%i_%i",site+1,range,sliceType,slice),500,0,5000);
-    /////////////////Fast Neutron Relevant/////////////
-    TH1D* prompttest = new TH1D("prompttest","prompttest",50,0,100);
-    TH1D* a_FastN_Prompt[8] = {0};
-    a_FastN_Prompt[0] = new TH1D("FastN_AD1","FastN_AD1",50,0,100);
-    a_FastN_Prompt[1] = new TH1D("FastN_AD2","FastN_AD2",50,0,100);
-    a_FastN_Prompt[2] = new TH1D("FastN_AD3","FastN_AD3",50,0,100);
-    a_FastN_Prompt[3] = new TH1D("FastN_AD4","FastN_AD4",50,0,100);
-    a_FastN_Prompt[4] = new TH1D("FastN_AD5","FastN_AD5",50,0,100);
-    a_FastN_Prompt[5] = new TH1D("FastN_AD6","FastN_AD6",50,0,100);
-    a_FastN_Prompt[6] = new TH1D("FastN_AD7","FastN_AD7",50,0,100);
-    a_FastN_Prompt[7] = new TH1D("FastN_AD8","FastN_AD8",50,0,100);
-    /////////////////Fast Neutron End/////////////
     
     TTree* tree = new TTree("IBD","ibd event");
     TTree* tree2 = new TTree("Singles","singles event");
@@ -308,17 +291,11 @@ int main(int argc, char** argv){
             }else if(phyEvent.isADMu){
                 if(thisEventTime>MuonVetoEnd[AdNo]) liveTime[AdNo]+=thisEventTime-MuonVetoEnd[AdNo];
                 MuonVetoEnd[AdNo]   = max(MuonVetoEnd[AdNo],thisEventTime+pVetoOfAD);
-                if(thisEventTime-closestOWSMuonTime>2000){
-                    FastNVetoEnd[AdNo]  = max(FastNVetoEnd[AdNo],thisEventTime+pVetoOfAD);
-                }
-                NmuonArray[AdNo]++;
                 continue;
             }else/* if(phyEvent.isSHMu)*/{
                 epLock[AdNo]=false;
                 if(thisEventTime>MuonVetoEnd[AdNo]) liveTime[AdNo]+=thisEventTime-MuonVetoEnd[AdNo];
                 //MuonVetoEnd[AdNo]   = max(MuonVetoEnd[AdNo],thisEventTime+pVetoOfSH);
-                FastNVetoEnd[AdNo]  = max(FastNVetoEnd[AdNo],thisEventTime+pVetoOfSH);
-                NmuonArray[AdNo]++;
                 continue;
             }
         }
@@ -366,22 +343,6 @@ int main(int argc, char** argv){
                 detNo=sdetNo;
         }
         //////////////IBD candidates seletion start here////////////
-        //if(phyEvent.isPrompt){
-        //    if(thisEventTime-preSingleTime[AdNo]>1000&&thisEventTime>MuonVetoEnd[AdNo]){
-        //        E=phyEvent.e;
-        //        X=phyEvent.x;
-        //        Y=phyEvent.y;
-        //        Z=phyEvent.z;
-        //        T=phyEvent.t;
-        //        tree2->Fill();
-        //        NaccSingleArr[AdNo]++;
-        //        if(E>0.7){N07[AdNo]++;}
-        //        if(E>1.5){N15[AdNo]++;}
-        //        if(E>6.&&Z>0.){Nup[AdNo]++;AmcSingles[AdNo]++;}     //here two if are for
-        //        if(E>6.&&Z<0.){Ndown[AdNo]++;AmcSingles[AdNo]--;}   // amc singles.
-        //    }
-        //    preSingleTime[AdNo]=thisEventTime;
-        //}
         if(phyEvent.isPrompt){
             if(IBDReady[AdNo]){
                 if(phyEvent.isDelay){
@@ -402,7 +363,8 @@ int main(int argc, char** argv){
                         dtlSH_low = a_ibd_dtlSH_low[AdNo];
                         dT=td-tp;
                         dist=sqrt(pow(xd-xp,2)+pow(yd-yp,2)+pow(zd-zp,2));                    
-                        Fill_dtlSH(array_h,dtlSH_high,dtlSH_mid,dtlSH_low,ep,ed,dT,dist);
+                        if(ep>1.5&&ed>1.9)
+                            Fill_dtlSH(array_h,dtlSH_high,dtlSH_mid,dtlSH_low,ep,ed,dT,dist);
                         //tree->Fill();
                         a_NIBD[AdNo]++;
                     }
@@ -455,17 +417,17 @@ int main(int argc, char** argv){
     output->Write();
 }
 
-void Fill_dtlSH(TH1D* h[5][3][3][4][8], double dt_high, double dt_mid, double dt_low, double prompt, double delay, double dt, double distance){
+void Fill_dtlSH(TH1D* h[7][3][3][4][10], double dt_high, double dt_mid, double dt_low, double prompt, double delay, double dt, double distance){
     int site = EH1*1+EH2*2+EH3*3-1;
     if(dt_high/1.e6<5.e3)
         h_high->Fill(dt_high/1.e6);
     h_mid->Fill(dt_mid/1.e6);
     h_low->Fill(dt_low/1.e6);
-    for(int nslice = 4;nslice<9;nslice++){
-        int slice_prompt = int((prompt-0.7)/(12.001-0.7)*1.*nslice);
-        int slice_delay = int((delay-1.5)/(12.001-1.5)*1.*nslice);
+    for(int nslice = 4;nslice<11;nslice++){
+        int slice_prompt = int((prompt-1.5)/(12.001-1.5)*1.*nslice);
+        int slice_delay = int((delay-1.9)/(12.001-1.9)*1.*nslice);
         int slice_time = int((dt-1000.)/(400001.-1000.)*1.*nslice);
-        int slice_distance = int((distance*1.)/(500)*1.*nslice);
+        int slice_distance = int((distance*1.)/(500.)*1.*nslice);
         h[nslice-4][site][0][0][slice_prompt]->    Fill(dt_low/1.e6);
         h[nslice-4][site][0][1][slice_delay]->     Fill(dt_low/1.e6);
         h[nslice-4][site][0][2][slice_time]->      Fill(dt_low/1.e6);
