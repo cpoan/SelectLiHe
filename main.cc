@@ -15,9 +15,9 @@
 #include "TH1D.h"
 #include "TString.h"
 
-bool EH1=0;
+bool EH1=1;
 bool EH2=0;
-bool EH3=1;
+bool EH3=0;
 int EH=0;
 
 using namespace std;
@@ -34,7 +34,7 @@ TH1D* h_high = new TH1D("h_high","h_high",500,0,5000);
 TH1D* h_mid = new TH1D("h_mid","h_mid",500,0,5000); 
 TH1D* h_low = new TH1D("h_low","h_low",500,0,5000); 
 
-void Fill_dtlSH(TH1D* h[7][3][3][4][10], double dt_high, double dt_mid, double dt_low, double prompt, double delay, double dt, double distance);
+void Fill_dtlSH(TH1D* h[7][3][3][4][10], long long dt_high, long long dt_mid, long long dt_low, double prompt, double delay, long long dt, double distance);
 
 bool epLock[5]= {false,false,false,false,false};
 bool edLock[5]= {false,false,false,false,false};
@@ -256,12 +256,12 @@ int main(int argc, char** argv){
             if(phyEvent.isADMu||phyEvent.isSHMu){
                 if(phyEvent.isSHMu){
                     //if(thisEventTime-closestMuonTime[AdNo]>1000000)
-                        a_tlSH_high_tmp[AdNo] = thisEventTime;
+                        a_tlSH_high[AdNo] = thisEventTime;
                 }else if(thisEventTime-closestMuonTime[AdNo]>1000000){
                     if(phyEvent.isMulow)
-                        a_tlSH_low_tmp[AdNo] = thisEventTime;
+                        a_tlSH_low[AdNo] = thisEventTime;
                     else if(phyEvent.isMumid)
-                        a_tlSH_mid_tmp[AdNo] = thisEventTime;
+                        a_tlSH_mid[AdNo] = thisEventTime;
                 }
                 closestMuonTime[AdNo]=thisEventTime;
             }
@@ -299,11 +299,11 @@ int main(int argc, char** argv){
                 continue;
             }
         }
-        a_tlSH_high[AdNo] = a_tlSH_high_tmp[AdNo];
-        if(thisEventTime-closestMuonTime[AdNo]>1000000){
-            a_tlSH_mid[AdNo] = a_tlSH_mid_tmp[AdNo];
-            a_tlSH_low[AdNo] = a_tlSH_low_tmp[AdNo];
-        }
+        //a_tlSH_high[AdNo] = a_tlSH_high_tmp[AdNo];
+        //if(thisEventTime-closestMuonTime[AdNo]>1000000){
+        //    a_tlSH_mid[AdNo] = a_tlSH_mid_tmp[AdNo];
+        //    a_tlSH_low[AdNo] = a_tlSH_low_tmp[AdNo];
+        //}
         ///////////AmcSingles rate counting.//////////
         if(thisEventTime-startTime>86400000000000*day){
             for(int j=1;j<5;j++){
@@ -358,9 +358,9 @@ int main(int argc, char** argv){
                         yd=a_ibd_yd[AdNo];
                         zd=a_ibd_zd[AdNo];
                         td=a_ibd_td[AdNo];
-                        dtlSH_high = a_ibd_dtlSH_high[AdNo];
-                        dtlSH_mid = a_ibd_dtlSH_mid[AdNo];
-                        dtlSH_low = a_ibd_dtlSH_low[AdNo];
+                        //dtlSH_high = a_ibd_dtlSH_high[AdNo];
+                        //dtlSH_mid = a_ibd_dtlSH_mid[AdNo];
+                        //dtlSH_low = a_ibd_dtlSH_low[AdNo];
                         dT=td-tp;
                         dist=sqrt(pow(xd-xp,2)+pow(yd-yp,2)+pow(zd-zp,2));                    
                         if(ep>1.5&&ed>1.9)
@@ -377,6 +377,9 @@ int main(int argc, char** argv){
                 a_yp[AdNo]=phyEvent.y;
                 a_zp[AdNo]=phyEvent.z;
                 a_tp[AdNo]=phyEvent.t;
+                a_ibd_dtlSH_high[AdNo]=a_tp[AdNo]-a_tlSH_high[AdNo];
+                a_ibd_dtlSH_mid[AdNo]=a_tp[AdNo]-a_tlSH_mid[AdNo];
+                a_ibd_dtlSH_low[AdNo]=a_tp[AdNo]-a_tlSH_low[AdNo];
             }else{
                 if(thisEventTime<MuonVetoEnd[AdNo]
                         ||thisEventTime-a_tp[AdNo]>timeCut
@@ -390,6 +393,9 @@ int main(int argc, char** argv){
                     a_yp[AdNo]=phyEvent.y;
                     a_zp[AdNo]=phyEvent.z;
                     a_tp[AdNo]=phyEvent.t;
+                    a_ibd_dtlSH_high[AdNo]=a_tp[AdNo]-a_tlSH_high[AdNo];
+                    a_ibd_dtlSH_mid[AdNo]=a_tp[AdNo]-a_tlSH_mid[AdNo];
+                    a_ibd_dtlSH_low[AdNo]=a_tp[AdNo]-a_tlSH_low[AdNo];
                 }else{
                     a_ibd_ep[AdNo]=a_ep[AdNo];
                     a_ibd_xp[AdNo]=a_xp[AdNo];
@@ -401,9 +407,12 @@ int main(int argc, char** argv){
                     a_ibd_yd[AdNo]=phyEvent.y;
                     a_ibd_zd[AdNo]=phyEvent.z;
                     a_ibd_td[AdNo]=phyEvent.t;
-                    a_ibd_dtlSH_high[AdNo]=double(a_ibd_tp[AdNo]-a_tlSH_high[AdNo]);
-                    a_ibd_dtlSH_mid[AdNo]=double(a_ibd_tp[AdNo]-a_tlSH_mid[AdNo]);
-                    a_ibd_dtlSH_low[AdNo]=double(a_ibd_tp[AdNo]-a_tlSH_low[AdNo]);
+                    dtlSH_high = a_ibd_dtlSH_high[AdNo];
+                    dtlSH_mid = a_ibd_dtlSH_mid[AdNo];
+                    dtlSH_low = a_ibd_dtlSH_low[AdNo];
+                    //a_ibd_dtlSH_high[AdNo]=double(a_ibd_tp[AdNo]-a_tlSH_high[AdNo]);
+                    //a_ibd_dtlSH_mid[AdNo]=double(a_ibd_tp[AdNo]-a_tlSH_mid[AdNo]);
+                    //a_ibd_dtlSH_low[AdNo]=double(a_ibd_tp[AdNo]-a_tlSH_low[AdNo]);
                     IBDReady[AdNo]=true;
                     epLock[AdNo]=false;
                     closestPromptTime[AdNo]=thisEventTime;
@@ -417,10 +426,9 @@ int main(int argc, char** argv){
     output->Write();
 }
 
-void Fill_dtlSH(TH1D* h[7][3][3][4][10], double dt_high, double dt_mid, double dt_low, double prompt, double delay, double dt, double distance){
+void Fill_dtlSH(TH1D* h[7][3][3][4][10], long long dt_high, long long dt_mid, long long dt_low, double prompt, double delay, long long dt, double distance){
     int site = EH1*1+EH2*2+EH3*3-1;
-    if(dt_high/1.e6<5.e3)
-        h_high->Fill(dt_high/1.e6);
+    h_high->Fill(dt_high/1.e6);
     h_mid->Fill(dt_mid/1.e6);
     h_low->Fill(dt_low/1.e6);
     int region;
@@ -428,7 +436,7 @@ void Fill_dtlSH(TH1D* h[7][3][3][4][10], double dt_high, double dt_mid, double d
         region = 0;
     else if(delay>=2.7&&delay<=6.)
         region = 1;
-    else(delay>6)
+    else
         region = 2;
     for(int nslice = 4;nslice<11;nslice++){
         int slice_prompt = int((prompt-1.5)/(12.001-1.5)*1.*nslice);

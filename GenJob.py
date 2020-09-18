@@ -13,6 +13,7 @@ if __name__ == "__main__":
     scriptDir = AppDir+"tcshFile/"
 
     ListOfList = os.listdir( GoodRunList )
+    count = 0
     for run in ListOfList:
         listName = run.split('.')[0]
         runNo = run.split('.')[0]
@@ -23,7 +24,7 @@ if __name__ == "__main__":
         FILE.writelines("#!/bin/tcsh \n")
         FILE.writelines("rerun:\n")
         FILE.writelines("cd "+AppDir+" \n")
-        FILE.writelines("source  /afs/ihep.ac.cn/soft/dayabay/NuWa-slc6/opt/external/ROOT/5.26.00e_python2.7/x86_64-slc6-gcc44-opt/root/bin/thisroot.sh\n")
+        FILE.writelines("source /afs/ihep.ac.cn/soft/dayabay/NuWa-slc6/opt/external/ROOT/5.26.00e_python2.7/x86_64-slc6-gcc44-opt/root/bin/thisroot.sh\n")
         FILE.writelines("./"+program+"1 "+GoodRunList+listName+".list "+OutPutDir+base+".root \n")
         FILE.writelines("if(\"$?\" == \"0\")then\n")
         FILE.writelines("\techo \"Let's do it\"\n")
@@ -34,6 +35,9 @@ if __name__ == "__main__":
         FILE.close()
         os.system("chmod a+x "+cshfile)
         os.system( "/afs/ihep.ac.cn/soft/common/sysgroup/hep_job/bin/hep_sub "+cshfile+" -g dyw" )
+        #count = count + 1
+        #if(count>0):
+        #    break
 
     site = "EH2"
     GoodRunList = "/dybfs/users/chenpoan/"+dataPeriod+"/"+site+"/"
@@ -48,7 +52,7 @@ if __name__ == "__main__":
         FILE.writelines("#!/bin/tcsh \n")
         FILE.writelines("rerun:\n")
         FILE.writelines("cd "+AppDir+" \n")
-        FILE.writelines("source  /afs/ihep.ac.cn/soft/dayabay/NuWa-slc6/opt/external/ROOT/5.26.00e_python2.7/x86_64-slc6-gcc44-opt/root/bin/thisroot.sh\n")
+        FILE.writelines("source /afs/ihep.ac.cn/soft/dayabay/NuWa-slc6/opt/external/ROOT/5.26.00e_python2.7/x86_64-slc6-gcc44-opt/root/bin/thisroot.sh\n")
         FILE.writelines("./"+program+"2 "+GoodRunList+listName+".list "+OutPutDir+base+".root \n")
         FILE.writelines("if(\"$?\" == \"0\")then\n")
         FILE.writelines("\techo \"Let's do it\"\n")
@@ -73,7 +77,7 @@ if __name__ == "__main__":
         FILE.writelines("#!/bin/tcsh \n")
         FILE.writelines("rerun:\n")
         FILE.writelines("cd "+AppDir+" \n")
-        FILE.writelines("source  /afs/ihep.ac.cn/soft/dayabay/NuWa-slc6/opt/external/ROOT/5.26.00e_python2.7/x86_64-slc6-gcc44-opt/root/bin/thisroot.sh\n")
+        FILE.writelines("source /afs/ihep.ac.cn/soft/dayabay/NuWa-slc6/opt/external/ROOT/5.26.00e_python2.7/x86_64-slc6-gcc44-opt/root/bin/thisroot.sh\n")
         FILE.writelines("./"+program+"3 "+GoodRunList+listName+".list "+OutPutDir+base+".root \n")
         FILE.writelines("if(\"$?\" == \"0\")then\n")
         FILE.writelines("\techo \"Let's do it\"\n")
