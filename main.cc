@@ -445,22 +445,22 @@ void Fill_dtlSH(TH1D* h[7][3][3][4][10], long long dt_high, long long dt_mid, lo
         int slice_distance = int((distance*1.)/(500.)*1.*nslice);
 
         h[nslice-4][site][0][0][slice_prompt]->     Fill(dt_low/1.e6);
-        //h[nslice-4][site][0][1][slice_delay]->      Fill(dt_low/1.e6);
+        h[nslice-4][site][0][1][slice_delay]->      Fill(dt_low/1.e6);
         h[nslice-4][site][0][2][slice_time]->       Fill(dt_low/1.e6);
         h[nslice-4][site][0][3][slice_distance]->   Fill(dt_low/1.e6);
 
         h[nslice-4][site][1][0][slice_prompt]->     Fill(dt_mid/1.e6);
-        //h[nslice-4][site][1][1][slice_delay]->      Fill(dt_mid/1.e6);
+        h[nslice-4][site][1][1][slice_delay]->      Fill(dt_mid/1.e6);
         h[nslice-4][site][1][2][slice_time]->       Fill(dt_mid/1.e6);
         h[nslice-4][site][1][3][slice_distance]->   Fill(dt_mid/1.e6);
 
         h[nslice-4][site][2][0][slice_prompt]->     Fill(dt_high/1.e6);
-        //h[nslice-4][site][2][1][slice_delay]->      Fill(dt_high/1.e6);
+        h[nslice-4][site][2][1][slice_delay]->      Fill(dt_high/1.e6);
         h[nslice-4][site][2][2][slice_time]->       Fill(dt_high/1.e6);
         h[nslice-4][site][2][3][slice_distance]->   Fill(dt_high/1.e6);
 
-        h[nslice-4][site][0][1][region]->           Fill(dt_low/1.e6);
-        h[nslice-4][site][1][1][region]->           Fill(dt_mid/1.e6);
-        h[nslice-4][site][2][1][region]->           Fill(dt_high/1.e6);
+        //h[nslice-4][site][0][1][region]->           Fill(dt_low/1.e6);
+        //h[nslice-4][site][1][1][region]->           Fill(dt_mid/1.e6);
+        //h[nslice-4][site][2][1][region]->           Fill(dt_high/1.e6);
     }
 }
